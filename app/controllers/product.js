@@ -145,7 +145,7 @@ class ProductController {
 
             if (image) {
                 const uniqueNumber = Date.now()
-                const imageName = `${value.name.replace(/ /g, '-')}_${uniqueNumber}.${image.mimetype.split('/')[1]}`
+                const imageName = `${value.name.toLowerCase().replace(/\s+/g, '-')}_${uniqueNumber}.${image.mimetype.split('/')[1]}`
                 image.mv(`${uploadPath}/images/products/${imageName}`)
                 value.image = imageName
                 fs.unlink(`${uploadPath}/images/products/${product.image}`)
