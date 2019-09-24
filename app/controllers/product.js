@@ -2,7 +2,7 @@ const fs = require('fs').promises
 const { resolve: pathResolve } = require('path')
 const { Op } = require('sequelize') 
 const { Product, Category } = require('../../database/models')
-const { baseSchema, addSchema } = require('../../validator/product')
+const { updateSchema, addSchema } = require('../../validator/product')
 const validate = require('../../validator')
 const { fileExist } = require('../../utils/FileHelper')
 const HttpError = require('../../utils/HttpError')
@@ -152,7 +152,7 @@ class ProductController {
             if (!product) 
                 throw new HttpError(404, 'Not Found', `Can't find product with id: ${req.params.id}`)
             
-            const { value } = validate(req.body, baseSchema)
+            const { value } = validate(req.body, updateSchema)
             const image = req.files.image
 
             if (image) {

@@ -11,12 +11,21 @@ class HttpError extends Error {
             res.status(error.code).send(error)
         } else {
             console.error(err)
-            res.status(500).send({
-                code: 500,
-                status: 'Internal server error!',
-                message: 'An error occured in server!',
-                error: true
-            })
+            if (err.message === 'Validation error') {
+                res.status(400).send({
+                    code: 400,
+                    status: 'Bad Request!',
+                    message: err.errors[0].message,
+                    error: true
+                })
+            } else {
+                res.status(500).send({
+                    code: 500,
+                    status: 'Internal server error!',
+                    message: 'An error occured in server!',
+                    error: true
+                })
+            }
         }
     }
 }

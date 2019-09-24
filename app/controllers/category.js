@@ -1,5 +1,5 @@
 const { Category } = require('../../database/models')
-const { baseSchema, addSchema } = require('../../validator/category')
+const { updateSchema, addSchema } = require('../../validator/category')
 const validate = require('../../validator')
 const HttpError = require('../../utils/HttpError')
 
@@ -79,7 +79,7 @@ class CategoryController {
             if (!category) 
                 throw new HttpError(404, 'Not Found', `Can't find category with id: ${req.params.id}`)
             
-            const { value } = validate(req.body, baseSchema)
+            const { value } = validate(req.body, updateSchema)
 
             for (const key in value) category[key] = value[key]
             

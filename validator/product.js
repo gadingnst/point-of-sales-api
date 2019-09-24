@@ -1,7 +1,7 @@
 const joi = require('joi')
 
 module.exports = {
-    baseSchema: joi.object().keys({
+    updateSchema: joi.object().keys({
         name: joi.string().trim().max(255),
         description: joi.string().trim().max(255).default('No product description'),
         category_id: joi.string().guid(),
