@@ -1,0 +1,30 @@
+{
+  "name": "marketplace-api",
+  "version": "1.0.0",
+  "description": "RESTful API for MarketPlace App",
+  "main": "server.js",
+  "repository": "https://github.com/sutanlab/marketplace-api.git",
+  "author": "Sutan Gading Fadhillah Nasution",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "nodemon server.js",
+    "db:create": "sequelize db:create",
+    "db:migrate": "sequelize db:migrate",
+    "db:init": "sequelize db:create && sequelize db:migrate",
+    "db:rollback": "sequelize db:migrate:undo:all"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6-alpha.5",
+    "joi": "^14.3.1",
+    "morgan": "^1.9.1",
+    "mysql2": "^1.7.0",
+    "sequelize": "^5.19.0",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  }
+}

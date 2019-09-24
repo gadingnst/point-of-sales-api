@@ -1,0 +1,12 @@
+## TODO Task
+- [x] CRUD Products
+- [x] CRUD Categories
+- [ ] CRUD Orders
+- [ ] CRUD Users
+- [ ] Search product by name
+- [ ] Sort product by name, category, date updated
+- [ ] Pagination
+- [x] Upload image (on products)
+- [ ] Cannot reduce order (on orders) below 0
+- [x] Allowed CORS
+- [ ] Authentication with JWT
