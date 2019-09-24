@@ -1,13 +1,13 @@
 const { Category } = require('../../database/models')
-const { validateRequest, validateId } = require('../../validator')
 const { baseSchema, addSchema } = require('../../validator/category')
+const validate = require('../../validator')
 const HttpError = require('../../utils/HttpError')
 
 class CategoryController {
     
     static async addCategory(req, res) {
         try {
-            const { value } = validateRequest(req.body, addSchema)
+            const { value } = validate(req.body, addSchema)
             const result = await new Category(value).save()
             res.send({
                 code: 201,
@@ -34,13 +34,30 @@ class CategoryController {
         }
     }
 
-    static async deleteCategory(req, res) {
+    static async getOneCategory(req, res) {
         try {
-            const id = validateId(req.params.id)
-            const data = await Category.findOne({ where: { id } })
+            const data = await Category.findByPk(req.params.id)
             
             if (!data) 
-                throw new HttpError(404, 'Not Found', `Can't find category with id: ${id}`)
+                throw new HttpError(404, 'Not Found', `Can't find category with id: ${req.params.id}`)
+
+            res.send({
+                code: 200,
+                status: 'OK',
+                message: 'Success fetching category',
+                data
+            })
+        } catch (err) {
+            HttpError.handle(res, err)
+        }
+    }
+
+    static async deleteCategory(req, res) {
+        try {
+            const data = await Category.findByPk(req.params.id)
+            
+            if (!data) 
+                throw new HttpError(404, 'Not Found', `Can't find category with id: ${req.params.id}`)
 
             data.destroy()
 
@@ -57,13 +74,13 @@ class CategoryController {
 
     static async updateCategory(req, res) {
         try {
-            const id = validateId(req.params.id)
-            const { value } = validateRequest(req.body, baseSchema)
-            const category = await Category.findOne({ where: { id } })
+            const category = await Category.findByPk(req.params.id)
 
             if (!category) 
-                throw new HttpError(404, 'Not Found', `Can't find category with id: ${id}`)
+                throw new HttpError(404, 'Not Found', `Can't find category with id: ${req.params.id}`)
             
+            const { value } = validate(req.body, baseSchema)
+
             for (const key in value) category[key] = value[key]
             
             const data = await category.save()

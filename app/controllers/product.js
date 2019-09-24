@@ -1,8 +1,8 @@
 const fs = require('fs').promises
 const { Op } = require('sequelize') 
 const { Product, Category } = require('../../database/models')
-const { validateRequest, validateId } = require('../../validator')
 const { baseSchema, addSchema } = require('../../validator/product')
+const validate = require('../../validator')
 const HttpError = require('../../utils/HttpError')
 
 const uploadPath = 'storage/uploads'
@@ -10,7 +10,7 @@ class ProductController {
 
     static async addProduct(req, res) {
         try {
-            const { value } = validateRequest(req.body, addSchema)
+            const { value } = validate(req.body, addSchema)
             const image = req.files.image
             if (image) {
                 const uniqueNumber = Date.now()
@@ -68,13 +68,30 @@ class ProductController {
         }
     }
 
+    static async getOneProduct(req, res) {
+        try {
+            const data = await Product.findByPk(req.params.id)
+            
+            if (!data) 
+                throw new HttpError(404, 'Not Found', `Can't find product with id: ${req.params.id}`)
+
+            res.send({
+                code: 200,
+                status: 'OK',
+                message: 'Success fetching product',
+                data
+            })
+        } catch (err) {
+            HttpError.handle(res, err)
+        }
+    }
+
     static async deleteProduct(req, res) {
         try {
-            const id = validateId(req.params.id)
-            const data = await Product.findOne({ where: { id } })
+            const data = await Product.findByPk(req.params.id)
 
             if (!data)
-                throw new HttpError(404, 'Not Found', `Can't find product with id: ${id}`)
+                throw new HttpError(404, 'Not Found', `Can't find product with id: ${req.params.id}`)
 
             data.destroy()
             fs.unlink(`${uploadPath}/images/products/${data.image}`)
@@ -93,13 +110,13 @@ class ProductController {
 
     static async updateProduct(req, res) {
         try {
-            const id = validateId(req.params.id)
-            const { value } = validateRequest(req.body, baseSchema)
-            const product = await Product.findOne({ where: { id } })
-            const image = req.files.image
+            const product = await Product.findByPk(req.params.id)
 
             if (!product) 
-                throw new HttpError(404, 'Not Found', `Can't find product with id: ${id}`)
+                throw new HttpError(404, 'Not Found', `Can't find product with id: ${req.params.id}`)
+            
+            const { value } = validate(req.body, baseSchema)
+            const image = req.files.image
 
             if (image) {
                 const uniqueNumber = Date.now()
