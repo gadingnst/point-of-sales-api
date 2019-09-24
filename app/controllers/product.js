@@ -6,6 +6,7 @@ const validate = require('../../validator')
 const HttpError = require('../../utils/HttpError')
 
 const uploadPath = 'storage/uploads'
+
 class ProductController {
 
     static async addProduct(req, res) {
@@ -32,14 +33,16 @@ class ProductController {
 
     static async getProduct(req, res) {
         try {
+            const sorting = { asc: 'ASC', desc: 'DESC' }
             let conditions = {}
-            let { search, limit, page = 1 } = req.query
+            let { 
+                search, category, limit, 
+                sortdate, sortname, page = 1 
+            } = req.query
                 
             if (search) {
                 conditions = {
-                    where: {
-                        name: { [Op.substring]: req.query.search }
-                    }
+                    where: { name: { [Op.substring]: req.query.search } }
                 }
             }
 
@@ -51,6 +54,28 @@ class ProductController {
                     throw new HttpError(400, 'Bad Request', 'Request query (limit or page) must be a number!')
                 
                 conditions = { ...conditions, limit, offset: (page - 1) * limit }
+            }
+
+            if (category) {
+                conditions.where = { ...conditions.where, category_id: category }
+            }
+
+            if (sortdate) {
+                sortdate = sortdate.toLowerCase()
+                if (!(sortdate in sorting))
+                    throw new HttpError(405, 'Method not allowed', 'Sortdate must be: ASC or DESC!')
+                
+                conditions.order = [['updated_at', sorting[sortdate]]]
+            }
+
+            if (sortname) {
+                sortname = sortname.toLowerCase()
+                if (!(sortname in sorting))
+                    throw new HttpError(405, 'Method not allowed', 'Sortname must be: ASC or DESC!')
+                
+                conditions.order = !!conditions.order 
+                    ? [...conditions.order, ['name', sorting[sortname]]]
+                    : [['name', sorting[sortname]]]
             }
 
             const data = await Product.findAll({
