@@ -9,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
   Category.associate = function(models) {
     // associations can be defined here
     Category.beforeCreate(category => category.id = uuid())
-    Category.hasMany(models.Product, { as: 'products' })
   };
   return Category;
 };

@@ -1,4 +1,3 @@
-const fs = require('fs').promises
 const { Category } = require('../../database/models')
 const { validateRequest, validateId } = require('../../validator')
 const { baseSchema, addSchema } = require('../../validator/category')
@@ -38,9 +37,13 @@ class CategoryController {
     static async deleteCategory(req, res) {
         try {
             const id = validateId(req.params.id)
-            const data = await Category.destroy({ where: { id } })
+            const data = await Category.findOne({ where: { id } })
+            
             if (!data) 
                 throw new HttpError(404, 'Not Found', `Can't find category with id: ${id}`)
+
+            data.destroy()
+
             res.send({
                 code: 200,
                 status: 'OK',

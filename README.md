@@ -1,12 +1,13 @@
 ## TODO Task
 - [x] CRUD Products
 - [x] CRUD Categories
-- [ ] CRUD Orders
 - [ ] CRUD Users
+- [x] Validation schema
+- [x] Add/Reduce products stock
 - [ ] Search product by name
 - [ ] Sort product by name, category, date updated
 - [ ] Pagination
 - [x] Upload image (on products)
-- [ ] Cannot reduce order (on orders) below 0
+- [x] Cannot reduce stock (on products) below 0
 - [x] Allowed CORS
 - [ ] Authentication with JWT

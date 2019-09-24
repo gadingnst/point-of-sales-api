@@ -9,9 +9,9 @@
   "private": false,
   "scripts": {
     "start": "nodemon server.js",
-    "db:create": "sequelize db:create",
-    "db:migrate": "sequelize db:migrate",
-    "db:init": "sequelize db:create && sequelize db:migrate",
+    "db:drop": "sequelize db:drop",
+    "db:init": "sequelize db:create; sequelize db:migrate",
+    "db:seed": "sequelize db:seed:all",
     "db:rollback": "sequelize db:migrate:undo:all"
   },
   "dependencies": {
