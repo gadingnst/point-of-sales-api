@@ -1,5 +1,5 @@
 const route = require('express').Router()
-const Category = require('../app/controllers/category')
+const Category = require('../../app/controllers/category')
 
 route.get('/', Category.getCategory)
 route.post('/', Category.addCategory)
