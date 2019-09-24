@@ -4,9 +4,9 @@
 - [ ] CRUD Users
 - [x] Validation schema
 - [x] Add/Reduce products stock
-- [ ] Search product by name
+- [x] Search product by name
 - [ ] Sort product by name, category, date updated
-- [ ] Pagination
+- [x] Pagination products
 - [x] Upload image (on products)
 - [x] Cannot reduce stock (on products) below 0
 - [x] Allowed CORS

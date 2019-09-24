@@ -1,4 +1,5 @@
 const fs = require('fs').promises
+const { Op } = require('sequelize') 
 const { Product, Category } = require('../../database/models')
 const { validateRequest, validateId } = require('../../validator')
 const { baseSchema, addSchema } = require('../../validator/product')
@@ -29,11 +30,33 @@ class ProductController {
         }
     }
 
-    static async getAllProduct(req, res) {
+    static async getProduct(req, res) {
         try {
+            let conditions = {}
+            let { search, limit, page = 1 } = req.query
+                
+            if (search) {
+                conditions = {
+                    where: {
+                        name: { [Op.substring]: req.query.search }
+                    }
+                }
+            }
+
+            if (limit) {
+                limit = Number.parseInt(limit)
+                page = Number.parseInt(page)
+
+                if (Number.isNaN(limit) || Number.isNaN(page))
+                    throw new HttpError(400, 'Bad Request', 'Request query (limit or page) must be a number!')
+                
+                conditions = { ...conditions, limit, offset: (page - 1) * limit }
+            }
+
             const data = await Product.findAll({
-                include: [{ model: Category }]
+                include: [{ model: Category }], ...conditions
             })
+
             res.send({
                 code: 200,
                 status: 'OK',

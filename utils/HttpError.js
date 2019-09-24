@@ -1,7 +1,7 @@
 class HttpError extends Error {
     constructor(code, status, message) {
         super(JSON.stringify({ code, status, message, error: true }))
-        Error.captureStackTrace(this, HttpError)
+        Error.captureStackTrace(this, this.constructor)
     }
 
     static handle(res, err) {
@@ -10,7 +10,7 @@ class HttpError extends Error {
             console.error(error)
             res.status(error.code).send(error)
         } else {
-            console.error(err.stack)
+            console.error(err)
             res.status(500).send({
                 code: 500,
                 status: 'Internal server error!',

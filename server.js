@@ -19,10 +19,10 @@ async function start() {
     try {
         await db.authenticate()
         server.listen(port, () => {
-            console.log(`server running on http://localhost:${port}`)
+            console.log(`Server running on http://localhost:${port}\n`)
         })
     } catch (err) {
-        console.error('an error occured during connecting database:', err)
+        console.error('An error occured during connecting database:', err)
     }
 }
 

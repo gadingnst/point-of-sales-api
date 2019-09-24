@@ -4,7 +4,8 @@ module.exports = {
     password: 'mysql',
     database: 'marketplacedb',
     host: '127.0.0.1',
-    dialect: 'mysql'
+    dialect: 'mysql',
+    logging: false,
   },
   test: {
     username: 'database_test',
@@ -19,6 +20,7 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOSTNAME,
     dialect: 'mysql',
+    logging: false,
     dialectOptions: {}
   }
 }
