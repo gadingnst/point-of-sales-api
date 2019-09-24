@@ -82,7 +82,11 @@ class ProductController {
             }
 
             const data = await Product.findAll({
-                include: [{ model: Category }], ...conditions
+                ...conditions,
+                include: [{ model: Category, as: 'category' }],
+                attributes: {
+                    exclude: ['category_id', 'image']
+                }
             })
 
             res.send({
@@ -98,7 +102,12 @@ class ProductController {
 
     static async getOneProduct(req, res) {
         try {
-            const data = await Product.findByPk(req.params.id)
+            const data = await Product.findByPk(req.params.id, {
+                include: [{ model: Category, as: 'category' }],
+                attributes: {
+                    exclude: ['category_id', 'image']
+                }
+            })
             
             if (!data) 
                 throw new HttpError(404, 'Not Found', `Can't find product with id: ${req.params.id}`)
