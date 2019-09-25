@@ -1,7 +1,8 @@
 const route = require('express').Router()
-const auth = require('../app/controllers/auth')
+const middleware = require('../app/middlewares/auth')
+const controller = require('../app/controllers/auth')
 
-route.post('/login', auth.login)
-route.post('/logout', auth.logout)
+route.post('/register', middleware.register, controller.add)
+route.post('/login', middleware.attempt, controller.login)
 
 module.exports = route

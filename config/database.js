@@ -5,7 +5,7 @@ module.exports = {
     database: 'marketplacedb',
     host: '127.0.0.1',
     dialect: 'mysql',
-    logging: false,
+    logging: false
   },
   test: {
     username: 'database_test',

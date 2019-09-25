@@ -2,8 +2,7 @@ const uuid = require('uuid/v4')
 const { hash } = require('bcrypt')
 
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
-    name: DataTypes.STRING,
+  const Auth = sequelize.define('Auth', {
     email: {
       type: DataTypes.STRING,
       args: true,
@@ -13,12 +12,12 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     underscored: true,
   });
-  User.associate = function(models) {
+  Auth.associate = function(models) {
     // associations can be defined here
-    User.beforeCreate(async user => {
-      user.id = uuid()
-      user.password = await hash(user.password, 10)
+    Auth.beforeCreate(async auth => {
+      auth.id = uuid()
+      auth.password = await hash(auth.password, 10)
     })
   };
-  return User;
+  return Auth;
 };
