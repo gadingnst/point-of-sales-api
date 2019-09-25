@@ -1,7 +1,6 @@
 ## TODO Task
 - [x] CRUD Products
 - [x] CRUD Categories
-- [ ] CRUD Users
 - [x] Validation schema
 - [x] Add/Reduce products stock
 - [x] Search product by name
