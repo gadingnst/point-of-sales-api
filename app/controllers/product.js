@@ -37,10 +37,9 @@ class ProductController {
     static async getProduct(req, res) {
         try {
             const sorting = { asc: 'ASC', desc: 'DESC' }
-            let conditions = {}
+            let conditions = { order: [['created_at', 'ASC']] }
             let { 
-                search, category, limit, 
-                sortdate, sortname, page = 1 
+                search, category, limit, sort, page = 1 
             } = req.query
                 
             if (search) {
@@ -63,22 +62,16 @@ class ProductController {
                 conditions.where = { ...conditions.where, category_id: category }
             }
 
-            if (sortdate) {
-                sortdate = sortdate.toLowerCase()
-                if (!(sortdate in sorting))
-                    throw new HttpError(405, 'Method not allowed', 'Sortdate must be: ASC or DESC!')
-                
-                conditions.order = [['updated_at', sorting[sortdate]]]
-            }
+            if (sort) {
+                const sortingFields = ['name', 'category', 'price', 'created_at', 'updated_at']
+                let [field, order] = sort.toLowerCase().split('-')
 
-            if (sortname) {
-                sortname = sortname.toLowerCase()
-                if (!(sortname in sorting))
-                    throw new HttpError(405, 'Method not allowed', 'Sortname must be: ASC or DESC!')
-                
-                conditions.order = !!conditions.order 
-                    ? [...conditions.order, ['name', sorting[sortname]]]
-                    : [['name', sorting[sortname]]]
+                field = !!sortingFields.find(val => field === val) || 'created_at'
+
+                if (!(order in sorting))
+                    throw new HttpError(405, 'Method not allowed', 'Sorting method must be: ASC or DESC!')
+
+                conditions.order = [[field, sorting[order]]]
             }
 
             const data = await Product.findAll({
