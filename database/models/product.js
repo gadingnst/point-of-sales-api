@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     description: DataTypes.STRING,
     image: DataTypes.STRING,
-    category_id: DataTypes.UUID,
+    category: DataTypes.UUID,
     price: DataTypes.INTEGER,
     stock: DataTypes.INTEGER
   }, {
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   Product.associate = function(models) {
     // associations can be defined here
     Product.beforeCreate(product => product.id = uuid())
-    Product.belongsTo(models.Category, { as: 'category', foreignKey: 'category_id' })
+    Product.belongsTo(models.Category, { as: 'Category', foreignKey: 'category' })
   };
   return Product;
 };

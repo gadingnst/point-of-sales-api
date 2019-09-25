@@ -42,7 +42,7 @@ module.exports = {
         name: faker.commerce.productName(),
         description: 'No product desription.',
         price: faker.commerce.price(),
-        category_id: result[rand].id,
+        category: result[rand].id,
         stock: rand,
         created_at: new Date(),
         updated_at: new Date()

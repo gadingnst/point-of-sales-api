@@ -16,7 +16,7 @@ module.exports = {
       image: {
         type: Sequelize.STRING
       },
-      category_id: {
+      category: {
         type: Sequelize.UUID,
         references: {
           model: 'categories', // it's table name not model name

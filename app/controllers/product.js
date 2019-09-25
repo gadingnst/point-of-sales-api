@@ -59,14 +59,16 @@ class ProductController {
             }
 
             if (category) {
-                conditions.where = { ...conditions.where, category_id: category }
+                conditions.where = { ...conditions.where, category: category }
             }
 
             if (sort) {
                 const sortingFields = ['name', 'category', 'price', 'created_at', 'updated_at']
                 let [field, order] = sort.toLowerCase().split('-')
-
-                field = !!sortingFields.find(val => field === val) || 'created_at'
+                const column = sortingFields.find(col => field === col)
+                
+                if (!column)
+                    throw new HttpError(400, 'Bad Request', `Can't sort product by '${field}'`)
 
                 if (!(order in sorting))
                     throw new HttpError(405, 'Method not allowed', 'Sorting method must be: ASC or DESC!')
@@ -76,9 +78,9 @@ class ProductController {
 
             const data = await Product.findAll({
                 ...conditions,
-                include: [{ model: Category, as: 'category' }],
+                include: [{ model: Category, as: 'Category' }],
                 attributes: {
-                    exclude: ['category_id', 'image']
+                    exclude: ['category', 'image']
                 }
             })
 
@@ -96,9 +98,9 @@ class ProductController {
     static async getOneProduct(req, res) {
         try {
             const data = await Product.findByPk(req.params.id, {
-                include: [{ model: Category, as: 'category' }],
+                include: [{ model: Category, as: 'Category' }],
                 attributes: {
-                    exclude: ['category_id', 'image']
+                    exclude: ['category', 'image']
                 }
             })
             
