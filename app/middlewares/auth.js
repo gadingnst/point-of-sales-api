@@ -1,12 +1,10 @@
-const uuid = require('uuid/v4')
 const { compare } = require('bcrypt')
 const { sign, verify } = require('jsonwebtoken')
 const { Auth } = require('../../database/models')
 const { addSchema } = require('../../validator/auth')
+const { jwtSecretKey } = require('../../config')
 const validate = require('../../validator')
 const HttpError = require('../../utils/HttpError')
-
-const secretKey = uuid()
 
 module.exports = {
     register: async (req, res, next) => {
@@ -36,7 +34,7 @@ module.exports = {
 
             res.locals.data = {
                 ...data.dataValues,
-                token: sign({ ...data.dataValues }, secretKey)
+                token: sign({ ...data.dataValues }, jwtSecretKey)
             }
 
             next()
