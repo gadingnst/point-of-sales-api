@@ -9,6 +9,7 @@ module.exports = {
     for (let i = 0; i < 15; i++) {
       data.push({
         id: uuid(),
+        name: faker.name.findName(),
         email: faker.internet.email(),
         password: await hash('123456', 10),
         created_at: new Date(),
@@ -16,7 +17,7 @@ module.exports = {
       })
     }
 
-    queryInterface.bulkInsert('auths', data, {})
+    queryInterface.bulkInsert('users', data, {})
     
     data = []
 
@@ -59,7 +60,7 @@ module.exports = {
     }
     await Promise.all([
       rollbackProduct(),
-      queryInterface.bulkDelete('auths', null, {})
+      queryInterface.bulkDelete('users', null, {})
     ])
   }
 }

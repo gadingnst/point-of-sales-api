@@ -5,7 +5,7 @@ class AuthController {
         res.send({
             code: 200,
             status: 'OK',
-            message: 'Success register auth',
+            message: 'Success register',
             data
         })
     }
@@ -16,6 +16,16 @@ class AuthController {
             code: 200,
             status: 'OK',
             message: 'Success login',
+            data
+        })
+    }
+
+    static async info(req, res) {
+        const { data } = res.locals
+        res.send({
+            code: 200,
+            status: 'OK',
+            message: 'Success fetch auth data',
             data
         })
     }

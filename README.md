@@ -9,4 +9,4 @@
 - [x] Upload image (on products)
 - [x] Cannot reduce stock (on products) below 0
 - [x] Allowed CORS
-- [ ] Authentication with JWT
+- [x] Authentication with JWT

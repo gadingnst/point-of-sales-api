@@ -1,7 +1,7 @@
 const { compare } = require('bcrypt')
 const { sign, verify } = require('jsonwebtoken')
-const { Auth } = require('../../database/models')
-const { addSchema } = require('../../validator/auth')
+const { User } = require('../../database/models')
+const { addSchema } = require('../../validator/user')
 const { jwtSecretKey } = require('../../config')
 const validate = require('../../validator')
 const HttpError = require('../../utils/HttpError')
@@ -10,7 +10,7 @@ module.exports = {
     register: async (req, res, next) => {
         try {
             const { value } = validate(req.body, addSchema)
-            const result = await new Auth(value).save()
+            const result = await new User(value).save()
             delete result.dataValues.password
             res.locals.data = result
             
@@ -22,10 +22,10 @@ module.exports = {
     attempt: async (req, res, next) => {
         try {
             const { email, password } = req.body
-            const data = await Auth.findOne({ where: { email } })
+            const data = await User.findOne({ where: { email } })
 
             if (!data)
-                throw new HttpError(404, 'Not Found', `Can't find auth with email: ${email}`)
+                throw new HttpError(404, 'Not Found', `Can't find user with email: ${email}`)
 
             if (!(await compare(password, data.password)))
                 throw new HttpError(403, 'Forbidden', 'Your password is invalid!')
@@ -33,7 +33,6 @@ module.exports = {
             delete data.dataValues.password
 
             res.locals.data = {
-                ...data.dataValues,
                 token: sign({ ...data.dataValues }, jwtSecretKey)
             }
 
@@ -42,10 +41,21 @@ module.exports = {
             HttpError.handle(res, err)
         }
     },
-    info: (req, res, next) => {
-        
-    },
     access: (req, res, next) => {
-
+        try {
+            const authToken = req.headers.authorization
+            
+            if (!authToken)
+                throw new HttpError(401, 'Unauthorized', `You're not authorized`)
+            
+            try {
+                res.locals.data = verify(authToken, jwtSecretKey)
+                next()
+            } catch (err) {
+                throw new HttpError(401, 'Unauthorized', `Invalid Token`)
+            }
+        } catch (err) {
+            HttpError.handle(res, err)
+        }
     }
 }
