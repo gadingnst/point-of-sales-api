@@ -9,11 +9,11 @@
   "private": false,
   "scripts": {
     "start": "nodemon -r dotenv/config server.js",
-    "db:drop": "sequelize db:drop",
     "db:init": "sequelize db:create; sequelize db:migrate",
-    "db:migrate": "sequelize db:create; sequelize db:migrate",
+    "db:migrate": "sequelize db:migrate",
     "db:seed": "sequelize db:seed:all",
     "db:rollback": "sequelize db:migrate:undo:all",
+    "db:drop": "sequelize db:drop",
     "postinstall": "[ -e .env ] || cp .env.example .env"
   },
   "dependencies": {

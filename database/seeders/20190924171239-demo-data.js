@@ -22,10 +22,10 @@ module.exports = {
       
       data = []
 
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 10; i++) {
         data.push({
           id: uuid(),
-          name: faker.commerce.department(),
+          name: `Category ${i + 1}`,
           created_at: new Date(),
           updated_at: new Date()
         })
