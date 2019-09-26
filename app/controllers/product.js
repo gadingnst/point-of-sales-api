@@ -6,6 +6,7 @@ const { updateSchema, addSchema } = require('../../validator/product')
 const validate = require('../../validator')
 const { fileExist, uploadImage } = require('../../utils/FileHelper')
 const HttpError = require('../../utils/HttpError')
+const redis = require('../../utils/PromiseRedis')
 
 const uploadPath = 'storage/uploads'
 const basedir = `${__dirname}/../..`
@@ -71,13 +72,22 @@ class ProductController {
                 conditions.order = [[field, sorting[order]]]
             }
 
-            const data = await Product.findAll({
-                ...conditions,
-                include: [{ model: Category, as: 'Category' }],
-                attributes: {
-                    exclude: ['category', 'image']
-                }
-            })
+            let data = []
+            const cacheKey = `products:${JSON.stringify(conditions)}`
+            const reply = await redis.get(cacheKey)
+
+            if (reply) {
+                data = reply                
+            } else {
+                data = await Product.findAll({
+                    ...conditions,
+                    include: [{ model: Category, as: 'Category' }],
+                    attributes: {
+                        exclude: ['category', 'image']
+                    }
+                })
+                redis.setex(cacheKey, 3600, data)
+            }
 
             res.send({
                 code: 200,
