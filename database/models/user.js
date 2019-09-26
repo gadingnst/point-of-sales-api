@@ -4,11 +4,7 @@ const { hash } = require('bcrypt')
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     name: DataTypes.STRING,
-    email: {
-      type: DataTypes.STRING,
-      args: true,
-      msg: 'Email already taken!',
-    },
+    email: DataTypes.STRING,
     password: DataTypes.STRING
   }, {
     underscored: true,

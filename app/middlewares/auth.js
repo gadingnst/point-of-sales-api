@@ -46,7 +46,7 @@ module.exports = {
             const authToken = req.headers.authorization
             
             if (!authToken)
-                throw new HttpError(401, 'Unauthorized', `You're not authorized`)
+                throw new HttpError(401, 'Unauthorized', `Authorization token has not been set`)
             
             try {
                 res.locals.data = verify(authToken, jwtSecretKey)
