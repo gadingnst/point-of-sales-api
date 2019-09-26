@@ -1,7 +1,7 @@
 const fs = require('fs').promises
 const { resolve: pathResolve } = require('path')
 const { Op } = require('sequelize') 
-const { Product, Category } = require('../../database/models')
+const { Product, Category } = require('../models')
 const { updateSchema, addSchema } = require('../../validator/product')
 const validate = require('../../validator')
 const { fileExist, uploadImage } = require('../../utils/FileHelper')

@@ -1,4 +1,4 @@
-const { Category } = require('../../database/models')
+const { Category } = require('../models')
 const { updateSchema, addSchema } = require('../../validator/category')
 const validate = require('../../validator')
 const HttpError = require('../../utils/HttpError')

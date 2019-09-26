@@ -1,6 +1,6 @@
 const { compare } = require('bcrypt')
 const { sign, verify } = require('jsonwebtoken')
-const { User } = require('../../database/models')
+const { User } = require('../models')
 const { addSchema } = require('../../validator/user')
 const { jwtSecretKey } = require('../../config')
 const validate = require('../../validator')
