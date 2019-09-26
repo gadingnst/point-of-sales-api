@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
       user.id = uuid()
       user.password = await hash(user.password, 10)
     })
+    User.beforeUpdate(async user => {
+      user.password = await hash(user.password, 10)
+    })
   };
   return User;
 };
