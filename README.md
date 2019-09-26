@@ -10,3 +10,4 @@
 - [x] Cannot reduce stock (on products) below 0
 - [x] Allowed CORS
 - [x] Authentication with JWT
+- [x] Rows caching with redis

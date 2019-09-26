@@ -3,7 +3,7 @@ const logger = require('morgan')
 const cors = require('cors')
 const fileUpload = require('express-fileupload')
 const routes = require('./routes')
-const db = require('./database/connection')
+const { sequelize: db } = require('./config/connection')
 
 const server = express()
 const port = process.env.PORT || 9600
