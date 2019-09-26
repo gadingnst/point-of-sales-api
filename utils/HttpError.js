@@ -8,25 +8,35 @@ class HttpError extends Error {
         if (err instanceof this) {
             const error = JSON.parse(err.message)
             console.error(error)
-            res.status(error.code).send(error)
-        } else {
-            console.error(err)
-            if (err.message === 'Validation error') {
-                res.status(400).send({
-                    code: 400,
-                    status: 'Bad Request!',
-                    message: err.errors[0].message,
-                    error: true
-                })
-            } else {
-                res.status(500).send({
-                    code: 500,
-                    status: 'Internal server error!',
-                    message: 'An error occured in server!',
-                    error: true
-                })
-            }
+            return res.status(error.code).send(error)
         }
+
+        if (err.name === 'SequelizeForeignKeyConstraintError') {
+            return res.status(400).send({
+                code: 400,
+                status: 'Bad Request',
+                message: `Reference key error on fields: ${err.fields.join(', ')}`,
+                error: true
+            })
+        }
+
+        if (err.name === 'SequelizeUniqueConstraintError') {
+            const { path, value } = err.errors[0]
+            return res.status(400).send({
+                code: 400,
+                status: 'Bad Request',
+                message: `${path} ${value} already taken!`,
+                error: true
+            })
+        }
+
+        console.error(err)
+        res.status(500).send({
+            code: 500,
+            status: 'Internal server error!',
+            message: 'An error occured in server!',
+            error: true
+        })
     }
 }
 

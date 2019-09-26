@@ -1,6 +1,6 @@
 const { compare } = require('bcrypt')
 const { sign, verify } = require('jsonwebtoken')
-const { User } = require('../../database/models')
+const { User } = require('../models')
 const { addSchema } = require('../../validator/user')
 const { jwtSecretKey } = require('../../config')
 const validate = require('../../validator')
@@ -46,7 +46,7 @@ module.exports = {
             const authToken = req.headers.authorization
             
             if (!authToken)
-                throw new HttpError(401, 'Unauthorized', `You're not authorized`)
+                throw new HttpError(401, 'Unauthorized', `Authorization token has not been set`)
             
             try {
                 res.locals.data = verify(authToken, jwtSecretKey)

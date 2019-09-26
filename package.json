@@ -11,8 +11,10 @@
     "start": "nodemon -r dotenv/config server.js",
     "db:drop": "sequelize db:drop",
     "db:init": "sequelize db:create; sequelize db:migrate",
+    "db:migrate": "sequelize db:create; sequelize db:migrate",
     "db:seed": "sequelize db:seed:all",
-    "db:rollback": "sequelize db:migrate:undo:all"
+    "db:rollback": "sequelize db:migrate:undo:all",
+    "postinstall": "[ -e .env ] || cp .env.example .env"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
