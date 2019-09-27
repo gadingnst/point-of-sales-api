@@ -74,7 +74,7 @@ $ yarn start
 ### Products
 | Method | Endpoint | Description | Request Param | Request Body | Request Query |
 | --- | --- | --- | --- | --- | --- |
-| GET | /api/product | Get products | -  | -  | `search`: STRING, `limit`: NUMBER, `page`: NUMBER, `sort`: STRING (column with order splitted by '-'. Ex: sort=name-asc (order by name ASC) |
+| GET | /api/product | Get products | -  | -  | `search`: STRING, `limit`: NUMBER, `page`: NUMBER, `sort`: STRING (column with order splitted by '-'. Ex: `sort=name-asc (order by name ASC)` |
 | POST | /api/product | Create new product | - | `name`: STRING, `category`: STRING (UUID), `description`: STRING, `price`: NUMBER, `stock`: NUMBER, `image: FILE` | - |
 | GET | /api/product/:id | Get one product by id | `id`: STRING (UUID) | - | - |
 | PUT | /api/product/:id | Update product | `id`: STRING (UUID) | `name`: STRING, `category`: STRING (UUID), `description`: STRING, `price`: NUMBER, `stock`: NUMBER, `image: FILE` | - |
