@@ -1,12 +1,13 @@
 const fs = require('fs').promises
 const { resolve: pathResolve } = require('path')
 const { Op } = require('sequelize') 
+const md5 = require('md5')
 const { Product, Category } = require('../models')
 const { updateSchema, addSchema } = require('../../validator/product')
 const validate = require('../../validator')
 const { fileExist, uploadImage } = require('../../utils/FileHelper')
 const HttpError = require('../../utils/HttpError')
-const redis = require('../../utils/PromiseRedis')
+const redis = require('../../utils/Redis')
 
 const uploadPath = 'storage/uploads'
 const basedir = `${__dirname}/../..`
@@ -16,9 +17,10 @@ class ProductController {
     static async addProduct(req, res) {
         try {
             const { value } = validate(req.body, addSchema)
-            let image = req.files.image
+            let { image } = req.files || {}
             if (image) value.image = uploadImage(image, value.name)
             const result = await new Product(value).save()
+            redis.base.flushdb()
             res.send({
                 code: 201,
                 status: 'Created',
@@ -33,14 +35,15 @@ class ProductController {
     static async getProduct(req, res) {
         try {
             const sorting = { asc: 'ASC', desc: 'DESC' }
-            let conditions = { order: [['created_at', 'ASC']] }
-            let { 
+            let conditions = { order: [['updatedAt', 'DESC']] }
+            let {
                 search, category, limit, sort, page = 1 
             } = req.query
                 
             if (search) {
                 conditions = {
-                    where: { name: { [Op.substring]: req.query.search } }
+                    ...conditions,
+                    where: { name: { [Op.substring]: search } }
                 }
             }
 
@@ -59,9 +62,9 @@ class ProductController {
             }
 
             if (sort) {
-                const sortingFields = ['name', 'category', 'price', 'created_at', 'updated_at']
+                const sortingFields = ['name', 'category', 'price', 'createdAt', 'updatedAt']
                 let [field, order] = sort.toLowerCase().split('-')
-                const column = sortingFields.find(col => field === col)
+                const column = sortingFields.find(col => field.includes(col))
                 
                 if (!column)
                     throw new HttpError(400, 'Bad Request', `Can't sort product by '${field}'`)
@@ -73,7 +76,7 @@ class ProductController {
             }
 
             let data = []
-            const cacheKey = `products:${JSON.stringify(conditions)}`
+            const cacheKey = `products:${md5(JSON.stringify(conditions) + search)}`
             const reply = await redis.get(cacheKey)
 
             if (reply) {
@@ -83,10 +86,12 @@ class ProductController {
                     ...conditions,
                     include: [{ model: Category, as: 'Category' }],
                     attributes: {
-                        exclude: ['category', 'image']
+                        exclude: ['category', 'createdAt', 'updatedAt']
                     }
                 })
-                redis.setex(cacheKey, 3600, data)
+                
+                if (!!data.length)
+                    redis.setex(cacheKey, 3600, data)
             }
 
             res.send({
@@ -105,7 +110,7 @@ class ProductController {
             const data = await Product.findByPk(req.params.id, {
                 include: [{ model: Category, as: 'Category' }],
                 attributes: {
-                    exclude: ['category', 'image']
+                    exclude: ['category']
                 }
             })
             
@@ -132,6 +137,7 @@ class ProductController {
 
             const oldImagePath = `${uploadPath}/images/products/${data.image}`
             data.destroy()
+            redis.base.flushdb()
 
             fileExist(oldImagePath)
                 .then(exist => (
@@ -157,7 +163,7 @@ class ProductController {
                 throw new HttpError(404, 'Not Found', `Can't find product with id: ${req.params.id}`)
             
             const { value } = validate(req.body, updateSchema)
-            const image = req.files.image
+            const { image } = req.files || {}
 
             if (image) {
                 const oldImagePath = `${uploadPath}/images/products/${product.image}`
@@ -170,6 +176,7 @@ class ProductController {
 
             for (const key in value) product[key] = value[key]
             const data = await product.save()
+            redis.base.flushdb()
 
             res.send({
                 code: 200,
@@ -184,13 +191,9 @@ class ProductController {
 
     static async getImageProduct(req, res) {
         try {
-            const data = await Product.findByPk(req.params.id)
-            
-            if (!data) 
-                throw new HttpError(404, 'Not Found', `Can't find product with id: ${req.params.id}`)
+            const { image } = req.params
+            const imagePath = pathResolve(`${basedir}/${uploadPath}/images/products/${image}`)
 
-            const imagePath = pathResolve(`${basedir}/${uploadPath}/images/products/${data.image}`)
-            
             if (await fileExist(imagePath)) {
                 res.sendFile(imagePath)
             } else {

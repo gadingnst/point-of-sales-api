@@ -79,7 +79,7 @@ $ yarn start
 | GET | /api/product/:id | Get one product by id | `id`: STRING (UUID) | - | - |
 | PUT | /api/product/:id | Update product | `id`: STRING (UUID) | `name`: STRING, `category`: STRING (UUID), `description`: STRING, `price`: NUMBER, `stock`: NUMBER, `image: FILE` | - |
 | DELETE | /api/product/:id | Delete product | `id`: STRING (UUID) | - | - |
-| GET | /file/image/product/:id | Get product image | `id`: STRING (UUID) | - | - |
+| GET | /files/image/product/:image | Get product image | `image`: STRING (IMAGE NAME) | - | - |
 
 ### Category
 | Method | Endpoint | Description | Request Param | Request Body | Request Query |

@@ -22,7 +22,12 @@ class CategoryController {
 
     static async getCategory(req, res) {
         try {
-            const data = await Category.findAll()
+            const data = await Category.findAll({
+                order: [['updatedAt', 'DESC']],
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                }
+            })
             res.send({
                 code: 200,
                 status: 'OK',
