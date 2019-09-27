@@ -9,7 +9,7 @@
   "private": false,
   "scripts": {
     "start": "nodemon -r dotenv/config server.js",
-    "db:init": "sequelize db:create; sequelize db:migrate",
+    "db:init": "sequelize db:create;",
     "db:migrate": "sequelize db:migrate",
     "db:seed": "sequelize db:seed:all",
     "db:rollback": "sequelize db:migrate:undo:all",
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "faker": "^4.1.0",
-    "nodemon": "^1.19.2"
+    "nodemon": "^1.19.2",
+    "sequelize-cli": "^5.5.1"
   }
 }
