@@ -90,5 +90,18 @@ $ yarn start
 | PUT | /api/category/:id | Update category | `id`: STRING (UUID) | `name`: STRING | - |
 | DELETE | /api/category/:id | Delete category | `id`: STRING (UUID) | - | - |
 
+### User
+| Method | Endpoint | Description | Request Param | Request Body | Request Query |
+| --- | --- | --- | --- | --- | --- |
+| PUT | /api/user/:id | Update user | `id`: STRING (UUID) | `name`: STRING, `email`: STRING, `password`: STRING | - |
+| DELETE | /api/user/:id | Delete user | `id`: STRING (UUID) | - | - |
+
+### Auth
+| Method | Endpoint | Description | Request Headers | Request Body |
+| --- | --- | --- | --- | --- |
+| POST | /auth/register | Register user | -  | `name`: STRING, `email`: STRING, `password`: STRING |
+| POST | /auth/login | Login user | - | `email`: STRING, `password`: STRING |
+| GET | /auth/info | Get user info | `authorization`: STRING (TOKEN) | - |
+
 ---
 Copyright © 2019 by Sutan Gading Fadhillah Nasution
