@@ -48,7 +48,7 @@ class ProductController {
             }
 
             if (limit) {
-                limit = Number.parseInt(limit)
+                limit = Number.parseInt(limit < 1 ? 1 : limit)
                 page = Number.parseInt(page < 1 ? 1 : page)
 
                 if (Number.isNaN(limit) || Number.isNaN(page))
@@ -82,16 +82,21 @@ class ProductController {
             if (reply) {
                 data = reply                
             } else {
-                data = await Product.findAll({
+                data = await Product.findAndCountAll({
                     ...conditions,
                     include: [{ model: Category, as: 'Category' }],
                     attributes: {
                         exclude: ['category', 'createdAt', 'updatedAt']
                     }
                 })
+
+                data = {
+                    rows: data.rows,
+                    total: data.count,
+                    totalPage: Math.ceil(data.count / (limit || data.count))
+                }
                 
-                if (!!data.length)
-                    redis.setex(cacheKey, 3600, data)
+                if (!!data.rows.length) redis.setex(cacheKey, 3600, data)
             }
 
             res.send({
