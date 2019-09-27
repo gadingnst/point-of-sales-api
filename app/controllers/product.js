@@ -102,7 +102,7 @@ class ProductController {
             res.send({
                 code: 200,
                 status: 'OK',
-                message: !!data.length ? 'Success fetching all products' : 'No product available',
+                message: !!data.rows.length ? 'Success fetching all products' : 'No product available',
                 data
             })
         } catch (err) {
