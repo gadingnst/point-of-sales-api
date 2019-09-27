@@ -46,7 +46,7 @@ class ProductController {
 
             if (limit) {
                 limit = Number.parseInt(limit)
-                page = Number.parseInt(page)
+                page = Number.parseInt(page < 1 ? 1 : page)
 
                 if (Number.isNaN(limit) || Number.isNaN(page))
                     throw new HttpError(400, 'Bad Request', 'Request query (limit or page) must be a number!')

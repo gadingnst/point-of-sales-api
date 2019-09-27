@@ -69,5 +69,26 @@ $ yarn db:drop # drop table
 $ yarn start
 ```
 
+## API Details
+
+### Products
+| Method | Endpoint | Description | Request Param | Request Body | Request Query |
+| --- | --- | --- | --- | --- | --- |
+| GET | /api/product | Get products | -  | -  | `search`: STRING, `limit`: NUMBER, `page`: NUMBER, `sort`: STRING (column with order splitted by '-'. Ex: sort=name-asc (order by name ASC) |
+| POST | /api/product | Create new product | - | `name`: STRING, `category`: STRING (UUID), `description`: STRING, `price`: NUMBER, `stock`: NUMBER, `image: FILE` | - |
+| GET | /api/product/:id | Get one product by id | `id`: STRING (UUID) | - | - |
+| PUT | /api/product/:id | Update product | `id`: STRING (UUID) | `name`: STRING, `category`: STRING (UUID), `description`: STRING, `price`: NUMBER, `stock`: NUMBER, `image: FILE` | - |
+| DELETE | /api/product/:id | Delete product | `id`: STRING (UUID) | - | - |
+| GET | /file/image/product/:id | Get product image | `id`: STRING (UUID) | - | - |
+
+### Category
+| Method | Endpoint | Description | Request Param | Request Body | Request Query |
+| --- | --- | --- | --- | --- | --- |
+| GET | /api/category | Get category | -  | -  | - |
+| POST | /api/category | Create new category | - | `name`: STRING | - |
+| GET | /api/category/:id | Get one category by id | `id`: STRING (UUID) | - | - |
+| PUT | /api/category/:id | Update category | `id`: STRING (UUID) | `name`: STRING | - |
+| DELETE | /api/category/:id | Delete category | `id`: STRING (UUID) | - | - |
+
 ---
 Copyright © 2019 by Sutan Gading Fadhillah Nasution
