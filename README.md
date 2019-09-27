@@ -2,7 +2,26 @@
 
 > RESTful API for Point of Sales App
 
-## TODO Task
+<p align="center">
+  <a href="https://nodejs.org/">
+    <img title="Restful API" src="https://cdn-images-1.medium.com/max/871/1*d2zLEjERsrs1Rzk_95QU9A.png">
+  </a>
+</p>
+
+----
+## Table of contents
+- [Point of Sales API](#point-of-sales-api)
+  - [Table of contents](#table-of-contents)
+  - [TODO Tasks](#todo-tasks)
+  - [Stacks](#stacks)
+  - [Build Setup](#build-setup)
+  - [API Docs](#api-docs)
+    - [Products](#products)
+    - [Category](#category)
+    - [User](#user)
+    - [Auth](#auth)
+
+## TODO Tasks
 - [x] CRUD Products
 - [x] CRUD Categories
 - [x] Validation schema
@@ -16,11 +35,12 @@
 - [x] Rows caching with redis
 
 ## Stacks
-- Node JS
+- NodeJS
 - MySQL
 - ExpressJS
 - Sequelize ORM
-- JOI Validator
+- JWT
+- Joi Validator
 - Redis
 
 ## Build Setup
@@ -64,12 +84,12 @@ $ yarn db:rollback # rollback migrations
 $ yarn db:drop # drop table
 ```
 
-5. Serve server
+5. Start API server
 ```bash
 $ yarn start
 ```
 
-## API Details
+## API Docs
 
 ### Products
 | Method | Endpoint | Description | Request Param | Request Body | Request Query |
