@@ -6,5 +6,6 @@ route.post('/', Product.addProduct)
 route.get('/:id', Product.getOneProduct)
 route.put('/:id', Product.updateProduct)
 route.delete('/:id', Product.deleteProduct)
+route.patch('/stock/:id', Product.addAndReduceStockProduct)
 
 module.exports = route

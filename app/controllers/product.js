@@ -3,7 +3,7 @@ const { resolve: pathResolve } = require('path')
 const { Op } = require('sequelize') 
 const md5 = require('md5')
 const { Product, Category } = require('../models')
-const { updateSchema, addSchema } = require('../../validator/product')
+const { updateSchema, addSchema, patchStockSchema } = require('../../validator/product')
 const validate = require('../../validator')
 const { fileExist, uploadImage } = require('../../utils/FileHelper')
 const HttpError = require('../../utils/HttpError')
@@ -188,6 +188,40 @@ class ProductController {
                 status: 'OK',
                 message: 'Success updating product',
                 data
+            })
+        } catch (err) {
+            HttpError.handle(res, err)
+        }
+    }
+
+    static async addAndReduceStockProduct(req, res) {
+        try {
+            const { value: { operator, value } } = validate(req.body, patchStockSchema)
+            let product = await Product.findByPk(req.params.id)
+
+            if (!product)
+                throw new HttpError(404, 'Not Found', `Can't find product with id: ${req.params.id}`)
+
+            const ops = {
+                add: Number.parseInt(product.stock + value),
+                reduce: Number.parseInt(product.stock - value)
+            }
+            
+            if (!(operator.toLowerCase() in ops))
+                throw new HttpError(405, 'Method Not Allowed', 'Operator only can be a add/reduce!')
+
+            if (ops[operator] < 0)
+                throw new HttpError(409, 'Validation Error', `Can't reduce product stock below 0!`)
+
+            product.stock = ops[operator]
+            product = await product.save()
+            redis.base.flushdb()
+            
+            res.send({
+                code: 200,
+                status: 'OK',
+                message: `Success ${operator} product stock`,
+                data: product
             })
         } catch (err) {
             HttpError.handle(res, err)

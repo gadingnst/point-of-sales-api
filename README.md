@@ -99,6 +99,7 @@ $ yarn start
 | GET | /api/product/:id | Get one product by id | `id`: STRING (UUID) | - | - |
 | PUT | /api/product/:id | Update product | `id`: STRING (UUID) | `name`: STRING, `category`: STRING (UUID), `description`: STRING, `price`: NUMBER, `stock`: NUMBER, `image: FILE` | - |
 | DELETE | /api/product/:id | Delete product | `id`: STRING (UUID) | - | - |
+| PATCH | /api/product/stock/:id | Add or reduce product | `id`: STRING (UUID) | `operator`: STRING (add/reduce), `value`: NUMBER | - |
 | GET | /files/image/product/:image | Get product image | `image`: STRING (IMAGE NAME) | - | - |
 
 ### Category
