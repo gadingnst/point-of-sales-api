@@ -24,6 +24,7 @@
 ## TODO Tasks
 - [x] CRUD Products
 - [x] CRUD Categories
+- [x] Add/Reduce Products (Quantity)
 - [x] Validation schema
 - [x] Search product by name
 - [x] Sort product by name, category, date updated
