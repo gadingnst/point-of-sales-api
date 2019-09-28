@@ -24,9 +24,9 @@ class HttpError extends Error {
 
         if (err.name === 'SequelizeUniqueConstraintError') {
             const { path, value } = err.errors[0]
-            return res.status(400).send({
-                code: 400,
-                status: 'Bad Request',
+            return res.status(409).send({
+                code: 409,
+                status: 'Conflict',
                 message: `${path} ${value} already taken!`,
                 error: true
             })
