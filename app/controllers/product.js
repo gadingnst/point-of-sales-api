@@ -86,7 +86,7 @@ class ProductController {
                     ...conditions,
                     include: [{ model: Category, as: 'Category' }],
                     attributes: {
-                        exclude: ['category', 'createdAt', 'updatedAt']
+                        exclude: ['category']
                     }
                 })
 
