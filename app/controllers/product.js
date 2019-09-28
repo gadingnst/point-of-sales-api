@@ -91,9 +91,9 @@ class ProductController {
                 })
 
                 data = {
-                    rows: data.rows,
-                    total: data.count,
-                    totalPage: Math.ceil(data.count / (limit || data.count))
+                    totalRows: data.count,
+                    totalPage: Math.ceil(data.count / (limit || data.count)),
+                    rows: data.rows
                 }
                 
                 if (!!data.rows.length) redis.setex(cacheKey, 3600, data)

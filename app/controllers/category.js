@@ -64,7 +64,7 @@ class CategoryController {
             if (!data) 
                 throw new HttpError(404, 'Not Found', `Can't find category with id: ${req.params.id}`)
 
-            data.destroy()
+            await data.destroy()
 
             res.send({
                 code: 200,

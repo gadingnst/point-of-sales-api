@@ -11,11 +11,13 @@ class HttpError extends Error {
             return res.status(error.code).send(error)
         }
 
+        console.error(err)
+
         if (err.name === 'SequelizeForeignKeyConstraintError') {
             return res.status(400).send({
                 code: 400,
                 status: 'Bad Request',
-                message: `Reference key error on fields: ${err.fields.join(', ')}`,
+                message: `Reference foreign key error on table '${err.table}' to fields: '${err.fields.join(', ')}'`,
                 error: true
             })
         }
@@ -30,7 +32,6 @@ class HttpError extends Error {
             })
         }
 
-        console.error(err)
         res.status(500).send({
             code: 500,
             status: 'Internal server error!',
