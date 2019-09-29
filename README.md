@@ -88,7 +88,9 @@ $ yarn db:drop # drop table
 
 5. Start API server
 ```bash
-$ yarn start
+$ yarn watch # start and watch server
+
+$ yarn start # start server
 ```
 
 ## API Docs

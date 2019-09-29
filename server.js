@@ -15,6 +15,7 @@ server.use(express.json())
 server.use(cors())
 server.use(fileUpload())
 server.use(logger('dev'))
+server.use(express.static(`${__dirname}/public`))
 server.use(routes)
 
 async function start() {
