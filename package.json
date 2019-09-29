@@ -8,7 +8,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
+    "watch": "nodemon server.js",
     "sequelize": "./node_modules/.bin/sequelize",
     "db:init": "./node_modules/.bin/sequelize db:create;",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate",
