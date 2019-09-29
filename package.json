@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "nodemon -r dotenv/config server.js",
+    "start": "nodemon server.js",
     "sequelize": "./node_modules/.bin/sequelize",
     "db:init": "./node_modules/.bin/sequelize db:create;",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate",
