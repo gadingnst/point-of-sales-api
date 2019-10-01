@@ -24,6 +24,7 @@
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6-alpha.5",
+    "file-exists": "^5.0.1",
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.2.1",

@@ -1,16 +1,10 @@
-const fs = require('fs').promises
+const fileExists = require('file-exists')
 const HttpError = require('./HttpError')
 
 const uploadPath = 'storage/uploads'
 
 module.exports = {
-    
-    fileExist: filePath => new Promise(resolve => {
-        fs.access(filePath, fs.F_OK)
-            .then(() => resolve(true))
-            .catch(() => resolve(false))
-    }),
-
+    fileExists,
     uploadImage: (image, name) => {
         const uniqueNumber = Date.now()
         const allowed = ['jpg', 'jpeg', 'png', 'svg']

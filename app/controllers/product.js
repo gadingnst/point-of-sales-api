@@ -5,7 +5,7 @@ const md5 = require('md5')
 const { Product, Category } = require('../models')
 const { updateSchema, addSchema, patchStockSchema } = require('../../validator/product')
 const validate = require('../../validator')
-const { fileExist, uploadImage } = require('../../utils/FileHelper')
+const { fileExists, uploadImage } = require('../../utils/FileHelper')
 const HttpError = require('../../utils/HttpError')
 const redis = require('../../utils/Redis')
 
@@ -233,8 +233,7 @@ class ProductController {
             const { image } = req.params
             const imagePath = pathResolve(`${basedir}/${uploadPath}/images/products/${image}`)
 
-            return res.sendFile(pathResolve(`${basedir}/storage/placeholders/noimage-placeholder.jpg`))
-            if (await fileExist(imagePath)) {
+            if (await fileExists(imagePath)) {
                 res.sendFile(imagePath)
             } else {
                 res.status(404).sendFile(pathResolve(`${basedir}/storage/placeholders/noimage-placeholder.jpg`))
