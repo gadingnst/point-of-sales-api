@@ -233,6 +233,7 @@ class ProductController {
             const { image } = req.params
             const imagePath = pathResolve(`${basedir}/${uploadPath}/images/products/${image}`)
 
+            return res.sendFile(pathResolve(`${basedir}/storage/placeholders/noimage-placeholder.jpg`))
             if (await fileExist(imagePath)) {
                 res.sendFile(imagePath)
             } else {
