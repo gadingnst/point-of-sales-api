@@ -51,15 +51,15 @@ class ProductController {
             if (sort) {
                 const sortingFields = ['name', 'category', 'price', 'createdAt', 'updatedAt']
                 let [field, order] = sort.toLowerCase().split('-')
-                const column = sortingFields.find(col => field.includes(col))
-                
+                const column = sortingFields.find(col => field.includes(col.toLocaleLowerCase()))
+
                 if (!column)
                     throw new HttpError(400, 'Bad Request', `Can't sort product by '${field}'`)
 
                 if (!(order in sorting))
                     throw new HttpError(405, 'Method not allowed', 'Sorting method must be: ASC or DESC!')
 
-                conditions.order = [[field, sorting[order]]]
+                conditions.order = [[column, sorting[order]]]
             }
 
             if (limit) {
