@@ -41,20 +41,7 @@ class ProductController {
             } = req.query
                 
             if (search) {
-                conditions = {
-                    ...conditions,
-                    where: { name: { [Op.substring]: search } }
-                }
-            }
-
-            if (limit) {
-                limit = Number.parseInt(limit < 1 ? 1 : limit)
-                page = Number.parseInt(page < 1 ? 1 : page)
-
-                if (Number.isNaN(limit) || Number.isNaN(page))
-                    throw new HttpError(400, 'Bad Request', 'Request query (limit or page) must be a number!')
-                
-                conditions = { ...conditions, limit, offset: (page - 1) * limit }
+                conditions.where = { name: { [Op.substring]: search } }
             }
 
             if (category) {
@@ -73,6 +60,17 @@ class ProductController {
                     throw new HttpError(405, 'Method not allowed', 'Sorting method must be: ASC or DESC!')
 
                 conditions.order = [[field, sorting[order]]]
+            }
+
+            if (limit) {
+                limit = Number.parseInt(limit < 1 ? 1 : limit)
+                page = Number.parseInt(page < 1 ? 1 : page)
+
+                if (Number.isNaN(limit) || Number.isNaN(page))
+                    throw new HttpError(400, 'Bad Request', 'Request query (limit or page) must be a number!')
+                
+                conditions.limit = limit
+                conditions.offset = (page - 1) * limit
             }
 
             let data = []
