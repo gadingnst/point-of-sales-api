@@ -33,7 +33,7 @@ module.exports = {
             delete data.dataValues.password
 
             res.locals.data = {
-                ...data,
+                ...data.dataValues,
                 token: sign({ ...data.dataValues }, jwtSecretKey)
             }
 
