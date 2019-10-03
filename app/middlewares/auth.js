@@ -1,7 +1,7 @@
 const { compare } = require('bcrypt')
 const { sign, verify } = require('jsonwebtoken')
 const { User } = require('../models')
-const { addSchema } = require('../../validator/user')
+const { addSchema, loginSchema } = require('../../validator/user')
 const { jwtSecretKey } = require('../../config')
 const validate = require('../../validator')
 const HttpError = require('../../utils/HttpError')
@@ -21,7 +21,7 @@ module.exports = {
     },
     attempt: async (req, res, next) => {
         try {
-            const { email, password } = req.body
+            const { value: { email, password } } = validate(req.body, loginSchema)
             const data = await User.findOne({ where: { email } })
 
             if (!data)
