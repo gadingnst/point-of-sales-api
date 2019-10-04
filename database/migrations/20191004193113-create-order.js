@@ -8,16 +8,25 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID
       },
-      user: {
+      checkout: {
         type: Sequelize.UUID,
         references: {
-          model: 'users', // it's table name not model name
+          model: 'checkouts', // it's table name not model name
           key: 'id'
         }
       },
-      receipt: {
-        type: Sequelize.STRING,
-        unique: true
+      product: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'products',
+          key: 'id'
+        }
+      },
+      quantity: {
+        type: Sequelize.INTEGER
+      },
+      price: {
+        type: Sequelize.INTEGER
       }
     });
   },
@@ -30,6 +39,6 @@ module.exports = {
       Example:
       return queryInterface.dropTable('users');
     */
-    return queryInterface.dropTable('products');
+    return queryInterface.dropTable('orders');
   }
 };
