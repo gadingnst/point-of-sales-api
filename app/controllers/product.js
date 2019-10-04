@@ -19,8 +19,17 @@ class ProductController {
             const { value } = validate(req.body, addSchema)
             let { image } = req.files || {}
             if (image) value.image = uploadImage(image, value.name)
-            const result = await new Product(value).save()
+
+            let result = await new Product(value).save()
+            result = await Product.findByPk(result.id, {
+                include: [{ model: Category, as: 'Category' }],
+                attributes: {
+                    exclude: ['category']
+                }
+            })
+
             redis.base.flushdb()
+            
             res.send({
                 code: 201,
                 status: 'Created',
@@ -142,7 +151,7 @@ class ProductController {
             data.destroy()
             redis.base.flushdb()
 
-            fileExist(oldImagePath)
+            fileExists(oldImagePath)
                 .then(exist => (
                     !exist || fs.unlink(oldImagePath).catch(err => console.error(err))
                 ))
@@ -171,14 +180,22 @@ class ProductController {
             if (image) {
                 const oldImagePath = `${uploadPath}/images/products/${product.image}`
                 value.image = uploadImage(image, value.name)
-                fileExist(oldImagePath)
+                fileExists(oldImagePath)
                     .then(exist => (
                         !exist || fs.unlink(oldImagePath).catch(err => console.error(err))
                     ))
             }
 
             for (const key in value) product[key] = value[key]
-            const data = await product.save()
+            
+            let data = await product.save()
+            data = await Product.findByPk(data.id, {
+                include: [{ model: Category, as: 'Category' }],
+                attributes: {
+                    exclude: ['category']
+                }
+            })
+
             redis.base.flushdb()
 
             res.send({
