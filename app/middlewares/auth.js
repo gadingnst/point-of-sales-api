@@ -33,7 +33,7 @@ module.exports = {
             delete data.dataValues.password
 
             res.locals.data = {
-                ...data.dataValues,
+                user: { ...data.dataValues },
                 token: sign({ ...data.dataValues }, jwtSecretKey)
             }
 
@@ -44,12 +44,13 @@ module.exports = {
     },
     access: (req, res, next) => {
         try {
-            const authToken = req.headers.authorization
+            let authToken = req.headers.authorization
             
             if (!authToken)
                 throw new HttpError(401, 'Unauthorized', `Authorization token has not been set`)
             
             try {
+                authToken = authToken.split(/\s+/)[1]
                 res.locals.data = verify(authToken, jwtSecretKey)
                 next()
             } catch (err) {

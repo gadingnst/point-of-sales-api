@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const Checkout = sequelize.define('Checkout', {
     user: DataTypes.UUID,
     receipt: DataTypes.STRING,
-    price: DataTypes.INTEGER
+    amount: DataTypes.INTEGER
   }, {
     underscored: true,
   });
@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Checkout.beforeCreate(checkout => checkout.id = uuid())
     Checkout.belongsTo(models.User, { as: 'User', foreignKey: 'user' })
+    Checkout.hasMany(models.Order)
   };
   return Checkout;
 };
