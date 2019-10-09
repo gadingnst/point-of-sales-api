@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const Checkout = sequelize.define('Checkout', {
     user: DataTypes.UUID,
     receipt: DataTypes.STRING,
-    amount: DataTypes.INTEGER
+    amount: DataTypes.DOUBLE
   }, {
     underscored: true,
   });

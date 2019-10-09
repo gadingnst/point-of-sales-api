@@ -20,7 +20,7 @@ module.exports = {
         unique: true
       },
       amount: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DOUBLE
       },
       created_at: {
         allowNull: false,
