@@ -86,9 +86,8 @@ class ProductController {
             const cacheKey = `products:${md5(JSON.stringify(conditions) + search)}`
             const reply = await redis.get(cacheKey)
 
-            if (reply) {
-                data = reply                
-            } else {
+            if (reply) data = reply                
+            else {
                 data = await Product.findAndCountAll({
                     ...conditions,
                     include: [{ model: Category, as: 'Category' }],
@@ -231,7 +230,6 @@ class ProductController {
             product.stock = ops[operator]
             product = await product.save()
             redis.base.flushdb()
-            
             res.send({
                 code: 200,
                 status: 'OK',
