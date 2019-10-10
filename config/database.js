@@ -7,7 +7,8 @@ module.exports = {
     database: process.env.DB_NAME || 'posdb',
     host: process.env.DB_HOSTNAME || '127.0.0.1',
     dialect: 'mysql',
-    logging: false
+    logging: false,
+    timezone: '+07:00'
   },
   production: {
     username: process.env.DB_USERNAME,
@@ -16,6 +17,7 @@ module.exports = {
     host: process.env.DB_HOSTNAME,
     dialect: 'mysql',
     logging: false,
-    dialectOptions: {}
+    dialectOptions: {},
+    timezone: '+07:00'
   }
 }
