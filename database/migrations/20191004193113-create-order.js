@@ -8,14 +8,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID
       },
-      checkout: {
+      checkout_id: {
         type: Sequelize.UUID,
         references: {
           model: 'checkouts', // it's table name not model name
           key: 'id'
         }
       },
-      product: {
+      product_id: {
         type: Sequelize.UUID,
         references: {
           model: 'products',

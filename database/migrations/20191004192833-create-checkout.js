@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID
       },
-      user: {
+      user_id: {
         type: Sequelize.UUID,
         references: {
           model: 'users', // it's table name not model name
