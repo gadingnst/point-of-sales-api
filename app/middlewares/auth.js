@@ -7,18 +7,6 @@ const validate = require('../../validator')
 const HttpError = require('../../utils/HttpError')
 
 module.exports = {
-    register: async (req, res, next) => {
-        try {
-            const { value } = validate(req.body, addSchema)
-            const result = await new User(value).save()
-            delete result.dataValues.password
-            res.locals.data = result
-            
-            next()
-        } catch (err) {
-            HttpError.handle(res, err)
-        }
-    },
     attempt: async (req, res, next) => {
         try {
             const { value: { email, password } } = validate(req.body, loginSchema)
