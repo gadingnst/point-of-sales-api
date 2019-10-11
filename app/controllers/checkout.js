@@ -196,13 +196,6 @@ class CheckoutController {
                         .catch(err => reject(err))
                 })
             ])
-
-            res.send({
-                code: 200,
-                status: 'OK',
-                message: `Success fetching revenue by ${mode}`,
-                data: { mode, labels, recent, last }
-            })
             
             res.send({
                 code: 200,
