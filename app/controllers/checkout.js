@@ -31,36 +31,96 @@ class CheckoutController {
         }
     }
 
+    static async getDailyHistory(req, res) {
+        const { limit = 15 } = req.query
+        let history = {
+            recent: [
+                moment().subtract(1, 'day').format(),
+                moment().format()
+            ],
+            last: [
+                moment().subtract(2, 'day').format(),
+                moment().subtract(1, 'day').format()
+            ]
+        }
+
+        const config = date => ({
+            order: [['createdAt', 'DESC']],
+            where: {
+                created_at: {
+                    [Sequelize.Op.between]: date
+                }
+            },
+            attributes: { exclude: ['user_id'] },
+            include: [
+                {
+                    model: User,
+                    as: 'User',
+                    attributes: ['id', 'name', 'email']
+                },
+                {
+                    model: Order,
+                    attributes: ['id', 'quantity', 'price'],
+                    include: [
+                        {
+                            model: Product,
+                            include: [{ model: Category, as: 'Category', attributes: ['id', 'name'] }],
+                            as: 'Product',
+                            attributes: ['id', 'name', 'description', 'image', 'price', 'stock']
+                        }
+                    ]
+                }
+            ]
+        })
+
+        const [recent, last, data] = await Promise.all([
+            Checkout.findAll(config(history.recent)),
+            Checkout.findAll(config(history.last)),
+            Checkout.findAll({ limit, offset: 0, ...config(history.recent) })
+        ])
+
+        res.send({
+            code: 200,
+            status: 'OK',
+            message: `Success fetching daily revenue`,
+            data: {
+                recentIncome: recent.reduce((acc, cur) => acc + cur.amount, 0),
+                lastIncome: last.reduce((acc, cur) => acc + cur.amount, 0),
+                data
+            }
+        })
+    }
+
     static async getOrders(req, res) {
         try {
             let { recent, limit, page = 1 } = req.query
-            const conditions = {}
+            const conditions = { order: [['createdAt', 'DESC']] }
             
             if (recent) {
                 let date
                 switch (recent.toLowerCase()) {
                     case 'daily':
                         date = [
-                            moment().subtract(1, 'day').format('Y-M-D'),
-                            moment().format('Y-M-D')
+                            moment().subtract(1, 'day').format(),
+                            moment().format()
                         ]
                         break
                     case 'weekly':
                         date = [
-                            moment().subtract(1, 'week').format('Y-M-D'),
-                            moment().format('Y-M-D')
+                            moment().subtract(1, 'week').format(),
+                            moment().format()
                         ]
                         break
                     case 'monthly':
                         date = [
-                            moment().subtract(1, 'month').format('Y-M-D'),
-                            moment().format('Y-M-D')
+                            moment().subtract(1, 'month').format(),
+                            moment().format()
                         ]
                         break
                     case 'yearly':
                         date = [
-                            moment().subtract(1, 'year').format('Y-M-D'),
-                            moment().format('Y-M-D')
+                            moment().subtract(1, 'year').format(),
+                            moment().format()
                         ]
                         break
                     default:
@@ -106,8 +166,23 @@ class CheckoutController {
                 ]
             }
 
-            const data = await Checkout.findAll(config)
-            const count = data.length
+            const [data, count] = await Promise.all([
+                Checkout.findAll(config),
+                new Promise((resolve, reject) => {
+                    delete config.limit
+                    delete config.offset
+                    Checkout.findAll(config)
+                        .then(data => resolve(data.length))
+                        .catch(err => reject(err))
+                })
+            ])
+
+            res.send({
+                code: 200,
+                status: 'OK',
+                message: `Success fetching revenue by ${mode}`,
+                data: { mode, labels, recent, last }
+            })
             
             res.send({
                 code: 200,
@@ -128,16 +203,16 @@ class CheckoutController {
         try {
             let enumerate, labels = []
             const history = { recent: [], last: [] }
-            const mode = req.query.mode ? req.query.mode.toLowerCase() : 'week'
-            const group = { week: 'DATE', month: 'WEEK', year: 'MONTH' }
+            const mode = req.query.mode ? req.query.mode.toLowerCase().replace(/ly/, '') : 'week'
+            const group = { week: 'DATE', year: 'MONTH' }
 
             if (!(mode in group))
-                throw new HttpError(405, 'Method not allowed', `Allowed mode is ${Object.keys(group)}`)
+                throw new HttpError(405, 'Method not allowed', `Allowed mode is ${Object.keys(group).map(mode => `${mode}ly`)}`)
 
             history.recent[1] = moment().format()
             history.recent[0] = moment().subtract(1, mode).format()
             history.last[1] = moment(history.recent[0]).format()
-            history.last[0] = moment(history.last[1]).subtract(1, mode)
+            history.last[0] = moment(history.last[1]).subtract(1, mode).format()
 
             const enumeratePeriod = (history, mode) => (
                 Object.keys(enumerateDateByPeriod(history[0], history[1], mode))
@@ -202,9 +277,6 @@ class CheckoutController {
                         }
                     })
                     break
-                case 'month':
-                    // TODO 
-                    break
                 case 'year':
                     enumerate = enumeratePeriod(history.recent, 'month').map(date => moment(date).format('YYYY-MM'))
                     labels = enumerate.map(date => moment(date).format('MMMM').slice(0, 3))
@@ -245,7 +317,7 @@ class CheckoutController {
                     })
                     break
                 default:    
-                    throw new HttpError(405, 'Method not allowed', `Allowed mode is ${Object.keys(group)}`)
+                    throw new HttpError(405, 'Method not allowed', `Allowed mode is ${Object.keys(group).map(mode => `${mode}ly`)}`)
             }
 
             res.send({
@@ -262,6 +334,3 @@ class CheckoutController {
 }
 
 module.exports = CheckoutController
-
-// SELECT DISTINCT DATE(created_at) as date, COUNT(id) as checkouts, SUM(amount) as income FROM checkouts WHERE created_at BETWEEN '2019-10-01' AND '2019-10-12' GROUP BY DATE(created_at)
-// SELECT u.name, c.amount, c.receipt, c.id, p.name as product_name from orders as o JOIN checkouts as c ON o.checkout = c.id JOIN users as u ON c.user = u.id LEFT OUTER JOIN products as p ON o.product = p.id WHERE c.created_at BETWEEN '2019-10-10' AND '2019-10-12'

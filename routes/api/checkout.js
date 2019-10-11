@@ -6,4 +6,6 @@ route.post('/', auth.access, Checkout.checkout)
 route.get('/', auth.access, Checkout.getOrders)
 route.get('/statistic', auth.access, Checkout.getStatistic)
 
+route.get('/daily', auth.access, Checkout.getDailyHistory)
+
 module.exports = route
