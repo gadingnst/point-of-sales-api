@@ -3,6 +3,7 @@ const { addSchema } = require('../../validator/checkout')
 const Sequelize = require('sequelize')
 const moment = require('moment')
 const validate = require('../../validator')
+const redis = require('../../utils/Redis')
 const HttpError = require('../../utils/HttpError')
 const { enumerateDateByPeriod } = require('../../utils/Date')
 
@@ -16,9 +17,28 @@ class CheckoutController {
             delete checkout.orders
             
             checkout = await new Checkout(checkout).save()
-            orders = await Order.bulkCreate(orders.map(data => ({
-                ...data, checkout_id: checkout.id
-            })), { individualHooks: true })
+            const [orderData] = await Promise.all([
+                Order.bulkCreate(orders.map(data => ({
+                    ...data, checkout_id: checkout.id
+                })), { individualHooks: true }),
+                ...orders.map(data => (
+                    Product.findByPk(data.product_id)
+                        .then(product => {
+                            product.stock = product.stock - data.quantity
+                            if (product.stock < 0)
+                                throw new HttpError(409, 'Validation Error', `Can't reduce product stock below 0!`)
+                            product.save()
+                        })
+                        .catch(async err => {
+                            await Order.destroy({ where: { checkout_id: checkout.id } })
+                            await Checkout.destroy({ where: { receipt: checkout.receipt } })
+                            throw err
+                        })
+                ))
+            ])
+
+            orders = orderData
+            redis.base.flushdb()
 
             res.send({
                 code: 201,
