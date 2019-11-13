@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const express = require('express')
+const { HTTPS } = require('express-sslify')
 const logger = require('morgan')
 const cors = require('cors')
 const fileUpload = require('express-fileupload')
@@ -17,6 +18,9 @@ server.use(fileUpload())
 server.use(logger('dev'))
 server.use(express.static(`${__dirname}/public`))
 server.use(routes)
+
+if (process.env.NODE_ENV === 'production' && process.env.HOST_PROVIDER === 'heroku')
+  app.use(HTTPS({ trustProtoHeader: true }))
 
 async function start() {
     try {
