@@ -26,7 +26,7 @@ class ProductController {
                 }
             })
 
-            redis.base.flushdb()
+            if (redis) redis.base.flushdb()
             
             res.send({
                 code: 201,
@@ -80,9 +80,12 @@ class ProductController {
                 conditions.offset = (page - 1) * limit
             }
 
-            let data = []
-            const cacheKey = `products:${md5(JSON.stringify(conditions) + search)}`
-            const reply = await redis.get(cacheKey)
+            let reply, data = []
+            
+            if (redis) {
+                const cacheKey = `products:${md5(JSON.stringify(conditions) + search)}`
+                reply = await redis.get(cacheKey)
+            }
 
             if (reply) data = reply                
             else {
@@ -100,7 +103,7 @@ class ProductController {
                     rows: data.rows
                 }
                 
-                if (!!data.rows.length) redis.setex(cacheKey, 3600, data)
+                if (!!data.rows.length && redis) redis.setex(cacheKey, 3600, data)
             }
 
             res.send({
@@ -149,7 +152,8 @@ class ProductController {
             }
 
             data.destroy()
-            redis.base.flushdb()
+            
+            if (redis) redis.base.flushdb()
 
             res.send({
                 code: 200,
@@ -187,7 +191,7 @@ class ProductController {
                 }
             })
 
-            redis.base.flushdb()
+            if (redis) redis.base.flushdb()
 
             res.send({
                 code: 200,
@@ -221,7 +225,9 @@ class ProductController {
 
             product.stock = ops[operator]
             product = await product.save()
-            redis.base.flushdb()
+            
+            if (redis) redis.base.flushdb()
+
             res.send({
                 code: 200,
                 status: 'OK',
