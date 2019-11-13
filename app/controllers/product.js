@@ -1,6 +1,7 @@
 const { resolve: pathResolve } = require('path')
 const { Op } = require('sequelize')
 const md5 = require('md5')
+const { get: request } = require('axios')
 const { Product, Category } = require('../models')
 const { updateSchema, addSchema, patchStockSchema } = require('../../validator/product')
 const validate = require('../../validator')
@@ -241,12 +242,13 @@ class ProductController {
 
     static async getImageProduct(req, res) {
         try {
-            const { image } = req.params
-            res.redirect(Cloudinary.url(image))
-        } catch {
+            let { image } = req.params
+            image = Cloudinary.url(image)
+            await request(image)
+            res.redirect(image)
+        } catch (err) {
             res.status(404).sendFile(pathResolve(`${basedir}/storage/placeholders/noimage-placeholder.jpg`))
         }
-        res.end()
     }
 }
 

@@ -38,7 +38,8 @@ class CheckoutController {
             ])
 
             orders = orderData
-            redis.base.flushdb()
+            
+            if (redis) redis.base.flushdb()
 
             res.send({
                 code: 201,
