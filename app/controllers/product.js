@@ -1,15 +1,13 @@
-const fs = require('fs').promises
 const { resolve: pathResolve } = require('path')
-const { Op } = require('sequelize') 
+const { Op } = require('sequelize')
 const md5 = require('md5')
 const { Product, Category } = require('../models')
 const { updateSchema, addSchema, patchStockSchema } = require('../../validator/product')
 const validate = require('../../validator')
-const { fileExists, uploadImage } = require('../../utils/FileHelper')
 const HttpError = require('../../utils/HttpError')
+const Cloudinary = require('../../utils/Cloudinary')
 const redis = require('../../utils/Redis')
 
-const uploadPath = 'storage/uploads'
 const basedir = `${__dirname}/../..`
 
 class ProductController {
@@ -18,7 +16,7 @@ class ProductController {
         try {
             const { value } = validate(req.body, addSchema)
             let { image } = req.files || {}
-            if (image) value.image = uploadImage(image, value.name)
+            if (image) value.image = (await Cloudinary.upload(image, value.name))
 
             let result = await new Product(value).save()
             result = await Product.findByPk(result.id, {
@@ -146,14 +144,12 @@ class ProductController {
             if (!data)
                 throw new HttpError(404, 'Not Found', `Can't find product with id: ${req.params.id}`)
 
-            const oldImagePath = `${uploadPath}/images/products/${data.image}`
+            if (data.image) {
+                Cloudinary.destroy(data.image)
+            }
+
             data.destroy()
             redis.base.flushdb()
-
-            fileExists(oldImagePath)
-                .then(exist => (
-                    !exist || fs.unlink(oldImagePath).catch(err => console.error(err))
-                ))
 
             res.send({
                 code: 200,
@@ -177,12 +173,8 @@ class ProductController {
             const { image } = req.files || {}
 
             if (image) {
-                const oldImagePath = `${uploadPath}/images/products/${product.image}`
-                value.image = uploadImage(image, value.name)
-                fileExists(oldImagePath)
-                    .then(exist => (
-                        !exist || fs.unlink(oldImagePath).catch(err => console.error(err))
-                    ))
+                value.image = await Cloudinary.upload(image, value.name)
+                Cloudinary.destroy(product.image)
             }
 
             for (const key in value) product[key] = value[key]
@@ -244,16 +236,11 @@ class ProductController {
     static async getImageProduct(req, res) {
         try {
             const { image } = req.params
-            const imagePath = pathResolve(`${basedir}/${uploadPath}/images/products/${image}`)
-
-            if (await fileExists(imagePath)) {
-                res.sendFile(imagePath)
-            } else {
-                res.status(404).sendFile(pathResolve(`${basedir}/storage/placeholders/noimage-placeholder.jpg`))
-            }
-        } catch (err) {
-            HttpError.handle(res, err)
+            res.redirect(Cloudinary.url(image))
+        } catch {
+            res.status(404).sendFile(pathResolve(`${basedir}/storage/placeholders/noimage-placeholder.jpg`))
         }
+        res.end()
     }
 }
 

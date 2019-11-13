@@ -8,7 +8,7 @@ const routes = require('./routes')
 const { sequelize: db } = require('./config/connection')
 
 const server = express()
-const port = process.env.SERVER_PORT || 9600
+const port = process.env.PORT || 9600
 
 server.use(express.urlencoded({ extended: true }))
 server.use(express.json())
