@@ -1,5 +1,6 @@
 require('dotenv').config()
 
+const http = require('http')
 const express = require('express')
 const { HTTPS } = require('express-sslify')
 const logger = require('morgan')
@@ -25,7 +26,7 @@ if (process.env.NODE_ENV === 'production' && process.env.HOST_PROVIDER === 'hero
 async function start() {
     try {
         await db.authenticate()
-        server.listen(port, () => {
+        http.createServer(server).listen(port, () => {
             console.log(`Server running on http://localhost:${port}\n`)
         })
     } catch (err) {
