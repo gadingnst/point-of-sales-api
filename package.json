@@ -19,7 +19,7 @@
     "postinstall": "[ -e .env ] || cp .env.example .env"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bcrypt": "^3.0.6",
     "cloudinary": "^1.17.0",
     "cors": "^2.8.5",
